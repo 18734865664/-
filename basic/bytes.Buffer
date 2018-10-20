@@ -1,0 +1,473 @@
+++bytes.buffer是一个缓冲byte类型的缓冲器存放着都是byte ++
+Buffer 是 bytes 包中的一个 type Buffer struct{…}
+
+		A buffer is a variable-sized buffer of bytes with Read and Write methods. The zero value for Buffer is an empty buffer ready to use. 
+		（是一个变长的 buffer，具有 Read 和Write 方法。 Buffer 的 零值 是一个 空的 buffer，但是可以使用） 
+		Buffer 就像一个集装箱容器，可以存东西，取东西（存取数据） 
+		创建 一个 Buffer （其实底层就是一个 []byte， 字节切片） 
+		向其中写入数据 (Write mtheods) 
+		从其中读取数据 (Write methods)
+
+#### 创建 Buffer缓冲器
+
+		var b bytes.Buffer //直接定义一个 Buffer 变量，而不用初始化 
+		b.Writer([]byte(“Hello “)) // 可以直接使用
+
+		b1 := new(bytes.Buffer) //直接使用 new 初始化，可以直接使用 
+		// 其它两种定义方式 
+		func NewBuffer(buf []byte) *Buffer 
+		func NewBufferString(s string) *Buffer
+
+#### NewBuffer
+
+		// NewBuffer creates and initializes a new Buffer using buf as its initial 
+		// contents. It is intended to prepare a Buffer to read existing data. It 
+		// can also be used to size the internal buffer for writing. To do that, 
+		// buf should have the desired capacity but a length of zero. 
+		// 
+		// In most cases, new(Buffer) (or just declaring a Buffer variable) is 
+		// sufficient to initialize a Buffer. 
+		func NewBuffer(buf []byte) *Buffer { return &Buffer{buf: buf} } 
+		NewBuffer使用buf作为参数初始化Buffer， 
+		Buffer既可以被读也可以被写 
+		如果是读Buffer，buf需填充一定的数据 
+				如果是写，buf需有一定的容量(capacity)，当然也可以通过new(Buffer)来初始化Buffer。另外一个方法NewBufferString用一个string来初始化可读Buffer，并用string的内容填充Buffer. 
+			func IntToBytes(n int) []byte { 
+				x := int32(n) 
+				//创建一个内容是[]byte的slice的缓冲器 
+				//与bytes.NewBufferString(“”)等效 
+				bytesBuffer := bytes.NewBuffer([]byte{}) 
+				binary.Write(bytesBuffer, binary.BigEndian, x) 
+				return bytesBuffer.Bytes() 
+			}
+
+#### NewBufferString
+
+		方法NewBufferString用一个string来初始化可读Buffer，并用string的内容填充Buffer. 
+		用法和NewBuffer没有太大区别 ：
+			// NewBufferString creates and initializes a new Buffer using string s as its 
+			// initial contents. It is intended to prepare a buffer to read an existing 
+			// string. 
+			// 
+			// In most cases, new(Buffer) (or just declaring a Buffer variable) is 
+			// sufficient to initialize a Buffer. 
+			func NewBufferString(s string) *Buffer { 
+				return &Buffer{buf: []byte(s)} 
+			} 
+			func TestBufferString(){ 
+				buf1:=bytes.NewBufferString(“swift”) 
+				buf2:=bytes.NewBuffer([]byte(“swift”)) 
+				buf3:=bytes.NewBuffer([]byte{’s’,’w’,’i’,’f’,’t’}) 
+				fmt.Println(“===========以下buf1,buf2,buf3等效=========”) 
+				fmt.Println(“buf1:”, buf1) 
+				fmt.Println(“buf2:”, buf2) 
+				fmt.Println(“buf3:”, buf3) 
+				fmt.Println(“===========以下创建空的缓冲器等效=========”) 
+				buf4:=bytes.NewBufferString(“”) 
+				buf5:=bytes.NewBuffer([]byte{}) 
+				fmt.Println(“buf4:”, buf4) 
+				fmt.Println(“buf5:”, buf5) 
+			} 
+	输出：
+
+		===========以下buf1,buf2,buf3等效========= 
+		buf1: swift 
+		buf2: swift 
+		buf3: swift 
+		===========以下创建空的缓冲器等效========= 
+		buf4: 
+		buf5:
+
+###向 Buffer 中写入数据
+
+####Write 
+	把字节切片 p 写入到buffer中去。
+
+		// Write appends the contents of p to the buffer, growing the buffer as 
+		// needed. The return value n is the length of p; err is always nil. If the 
+		// buffer becomes too large, Write will panic with ErrTooLarge. 
+		func (b *Buffer) Write(p []byte) (n int, err error) { 
+			b.lastRead = opInvalid 
+			m := b.grow(len(p)) 
+			return copy(b.buf[m:], p), nil 
+		} 
+		fmt.Println(“===========以下通过Write把swift写入Learning缓冲器尾部=========”) 
+		newBytes := []byte(“swift”) 
+		//创建一个内容Learning的缓冲器 
+		buf := bytes.NewBuffer([]byte(“Learning”)) 
+		//打印为Learning 
+		fmt.Println(buf.String()) 
+		//将newBytes这个slice写到buf的尾部 
+		buf.Write(newBytes) 
+		fmt.Println(buf.String()) 
+	打印：
+
+		===========以下通过Write把swift写入Learning缓冲器尾部========= 
+		Learning 
+		Learningswift 
+#### WriteString 
+
+	使用WriteString方法，将一个字符串放到缓冲器的尾部
+
+		// WriteString appends the contents of s to the buffer, growing the buffer as 
+		// needed. The return value n is the length of s; err is always nil. If the 
+		// buffer becomes too large, WriteString will panic with ErrTooLarge. 
+		func (b *Buffer) WriteString(s string) (n int, err error) { 
+			b.lastRead = opInvalid 
+			m := b.grow(len(s)) 
+			return copy(b.buf[m:], s), nil 
+		} 
+		fmt.Println(“===========以下通过WriteString把swift写入Learning缓冲器尾部=========”) 
+		newString := “swift” 
+		//创建一个string内容Learning的缓冲器 
+		buf := bytes.NewBufferString(“Learning”) 
+		//打印为Learning 
+		fmt.Println(buf.String()) 
+		//将newString这个string写到buf的尾部 
+		buf.WriteString(newString) 
+		fmt.Println(buf.String()) 
+	打印：
+
+		===========以下通过Write把swift写入Learning缓冲器尾部========= 
+		Learning 
+		Learningswift 
+        
+#### WriteByte 
+
+	将一个byte类型的数据放到缓冲器的尾部
+
+		// WriteByte appends the byte c to the buffer, growing the buffer as needed. 
+		// The returned error is always nil, but is included to match bufio.Writer’s 
+		// WriteByte. If the buffer becomes too large, WriteByte will panic with 
+		// ErrTooLarge. 
+		func (b *Buffer) WriteByte(c byte) error { 
+			b.lastRead = opInvalid 
+			m := b.grow(1) 
+			b.buf[m] = c 
+			return nil 
+		} 
+		fmt.Println(“===========以下通过WriteByte把!写入Learning缓冲器尾部=========”) 
+		var newByte byte = ‘!’ 
+		//创建一个string内容Learning的缓冲器 
+		buf := bytes.NewBufferString(“Learning”) 
+		//打印为Learning 
+		fmt.Println(buf.String()) 
+		//将newString这个string写到buf的尾部 
+		buf.WriteByte(newByte) 
+		fmt.Println(buf.String()) 
+	打印：
+
+		===========以下通过WriteByte把swift写入Learning缓冲器尾部========= 
+		Learning 
+		Learning! 
+#### WriteRune 
+		
+	将一个rune类型的数据放到缓冲器的尾部
+
+		// WriteRune appends the UTF-8 encoding of Unicode code point r to the 
+		// buffer, returning its length and an error, which is always nil but is 
+		// included to match bufio.Writer’s WriteRune. The buffer is grown as needed; 
+		// if it becomes too large, WriteRune will panic with ErrTooLarge. 
+		func (b *Buffer) WriteRune(r rune) (n int, err error) { 
+			if r < utf8.RuneSelf { 
+				b.WriteByte(byte(r)) 
+				return 1, nil 
+			} 
+		n = utf8.EncodeRune(b.runeBytes[0:], r) 
+		b.Write(b.runeBytes[0:n]) 
+		return n, nil 
+		} 
+		fmt.Println(“===========以下通过WriteRune把\”好\”写入Learning缓冲器尾部=========”) 
+		var newRune = ‘好’ 
+		//创建一个string内容Learning的缓冲器 
+		buf := bytes.NewBufferString(“Learning”) 
+		//打印为Learning 
+		fmt.Println(buf.String()) 
+		//将newString这个string写到buf的尾部 
+		buf.WriteRune(newRune) 
+		fmt.Println(buf.String()) 
+	打印：
+
+		===========以下通过WriteRune把”好”写入Learning缓冲器尾部========= 
+		Learning 
+		Learning好 
+
+	完整示例 
+		package main
+
+		import ( 
+			“bytes” 
+			“encoding/binary” 
+			“fmt” 
+		)
+
+		func main() { 
+			//newBuffer 整形转换成字节 
+			var n int = 10000 
+			intToBytes := IntToBytes(n) 
+			fmt.Println(“==========int to bytes========”) 
+			fmt.Println(intToBytes) 
+			//NewBufferString 
+			TestBufferString() 
+			//write 
+			BufferWrite() 
+			//WriteString 
+			BufferWriteString() 
+			//WriteByte 
+		BufferWriteByte() 
+			//WriteRune 
+			BufferWriteRune()
+
+		}
+
+		func IntToBytes(n int) []byte { 
+			x := int32(n) 
+			//创建一个内容是[]byte的slice的缓冲器 
+			//与bytes.NewBufferString(“”)等效 
+			bytesBuffer := bytes.NewBuffer([]byte{}) 
+			binary.Write(bytesBuffer, binary.BigEndian, x) 
+			return bytesBuffer.Bytes() 
+		}
+
+		func TestBufferString(){ 
+			buf1:=bytes.NewBufferString(“swift”) 
+			buf2:=bytes.NewBuffer([]byte(“swift”)) 
+			buf3:=bytes.NewBuffer([]byte{’s’,’w’,’i’,’f’,’t’}) 
+			fmt.Println(“===========以下buf1,buf2,buf3等效=========”) 
+			fmt.Println(“buf1:”, buf1) 
+			fmt.Println(“buf2:”, buf2) 
+			fmt.Println(“buf3:”, buf3) 
+			fmt.Println(“===========以下创建空的缓冲器等效=========”) 
+			buf4:=bytes.NewBufferString(“”) 
+			buf5:=bytes.NewBuffer([]byte{}) 
+			fmt.Println(“buf4:”, buf4) 
+			fmt.Println(“buf5:”, buf5) 
+		}
+
+		func BufferWrite(){ 
+			fmt.Println(“===========以下通过Write把swift写入Learning缓冲器尾部=========”) 
+			newBytes := []byte(“swift”) 
+			//创建一个内容Learning的缓冲器 
+			buf := bytes.NewBuffer([]byte(“Learning”)) 
+			//打印为Learning 
+			fmt.Println(buf.String()) 
+			//将newBytes这个slice写到buf的尾部 
+			buf.Write(newBytes) 
+			fmt.Println(buf.String()) 
+		}
+
+		func BufferWriteString(){ 
+			fmt.Println(“===========以下通过Write把swift写入Learning缓冲器尾部=========”) 
+			newString := “swift” 
+			//创建一个string内容Learning的缓冲器 
+			buf := bytes.NewBufferString(“Learning”) 
+			//打印为Learning 
+			fmt.Println(buf.String()) 
+			//将newString这个string写到buf的尾部 
+			buf.WriteString(newString) 
+			fmt.Println(buf.String()) 
+		}
+
+		func BufferWriteByte(){ 
+			fmt.Println(“===========以下通过WriteByte把swift写入Learning缓冲器尾部=========”) 
+			var newByte byte = ‘!’ 
+			//创建一个string内容Learning的缓冲器 
+			buf := bytes.NewBufferString(“Learning”) 
+			//打印为Learning 
+			fmt.Println(buf.String()) 
+			//将newString这个string写到buf的尾部 
+			buf.WriteByte(newByte) 
+			fmt.Println(buf.String()) 
+		}
+
+		func BufferWriteRune(){ 
+			fmt.Println(“===========以下通过WriteRune把\”好\”写入Learning缓冲器尾部=========”) 
+			var newRune = ‘好’ 
+			//创建一个string内容Learning的缓冲器 
+			buf := bytes.NewBufferString(“Learning”) 
+			//打印为Learning 
+			fmt.Println(buf.String()) 
+			//将newString这个string写到buf的尾部 
+			buf.WriteRune(newRune) 
+			fmt.Println(buf.String()) 
+		} 
+        
+**
+
+### 向 Buffer 中读取数据
+
+** 
+#### Read 
+
+	给Read方法一个容器p，读完后，p就满了，缓冲器相应的减少了，返回的n为成功读的数量
+
+		// Read reads the next len(p) bytes from the buffer or until the buffer 
+		// is drained. The return value n is the number of bytes read. If the 
+		// buffer has no data to return, err is io.EOF (unless len(p) is zero); 
+		// otherwise it is nil. 
+		func (b *Buffer) Read(p []byte) (n int, err error) {} 
+		func Read(){ 
+			bufs := bytes.NewBufferString(“Learning swift.”) 
+			fmt.Println(bufs.String())
+
+			//声明一个空的slice,容量为8
+			l := make([]byte, 8)
+			//把bufs的内容读入到l内,因为l容量为8,所以只读了8个过来
+			bufs.Read(l)
+			fmt.Println("::bufs缓冲器内容::")
+			fmt.Println(bufs.String())
+			//空的l被写入了8个字符,所以为 Learning
+			fmt.Println("::l的slice内容::")
+			fmt.Println(string(l))
+			//把bufs的内容读入到l内,原来的l的内容被覆盖了
+			bufs.Read(l)
+			fmt.Println("::bufs缓冲器被第二次读取后剩余的内容::")
+			fmt.Println(bufs.String())
+			fmt.Println("::l的slice内容被覆盖,由于bufs只有7个了,因此最后一个g被留下来了::")
+			fmt.Println(string(l))
+		} 
+	打印：
+
+		=======Read======= 
+		Learning swift. 
+		::bufs缓冲器内容:: 
+		swift. 
+		::l的slice内容:: 
+		Learning 
+		::bufs缓冲器被第二次读取后剩余的内容::
+		
+		::l的slice内容被覆盖:: 
+		swift.g 
+        
+#### ReadByte 
+	
+    返回缓冲器头部的第一个byte，缓冲器头部第一个byte被拿掉
+
+		// ReadByte reads and returns the next byte from the buffer. 
+		// If no byte is available, it returns error io.EOF. 
+		func (b *Buffer) ReadByte() (c byte, err error) {} 
+		func ReadByte(){ 
+			bufs := bytes.NewBufferString(“Learning swift.”) 
+			fmt.Println(bufs.String()) 
+			//读取第一个byte,赋值给b 
+			b, _ := bufs.ReadByte() 
+			fmt.Println(bufs.String()) 
+			fmt.Println(string(b)) 
+		} 
+	打印：
+
+		=======ReadByte=== 
+		Learning swift. 
+		earning swift. 
+		L 
+        
+#### ReadRune 
+
+	ReadRune和ReadByte很像 
+	返回缓冲器头部的第一个rune，缓冲器头部第一个rune被拿掉
+
+		// ReadRune reads and returns the next UTF-8-encoded 
+		// Unicode code point from the buffer. 
+		// If no bytes are available, the error returned is io.EOF. 
+		// If the bytes are an erroneous UTF-8 encoding, it 
+		// consumes one byte and returns U+FFFD, 1. 
+		func (b *Buffer) ReadRune() (r rune, size int, err error) {} 
+		func ReadRune(){ 
+			bufs := bytes.NewBufferString(“学swift.”) 
+			fmt.Println(bufs.String())
+
+			//读取第一个rune,赋值给r
+			r,z,_ := bufs.ReadRune()
+			//打印中文"学",缓冲器头部第一个被拿走
+			fmt.Println(bufs.String())
+			//打印"学","学"作为utf8储存占3个byte
+			fmt.Println("r=",string(r),",z=",z)
+		} 
+#### ReadBytes 
+	
+    	ReadBytes需要一个byte作为分隔符，读的时候从缓冲器里找第一个出现的分隔符（delim），找到后，把从缓冲器头部开始到分隔符之间的所有byte进行返回，作为byte类型的slice，返回后，缓冲器也会空掉一部分
+
+		// ReadBytes reads until the first occurrence of delim in the input, 
+		// returning a slice containing the data up to and including the delimiter. 
+		// If ReadBytes encounters an error before finding a delimiter, 
+		// it returns the data read before the error and the error itself (often io.EOF). 
+		// ReadBytes returns err != nil if and only if the returned data does not end in 
+		// delim. 
+		func (b *Buffer) ReadBytes(delim byte) (line []byte, err error) {} 
+		func ReadBytes(){ 
+			bufs := bytes.NewBufferString(“现在开始 Learning swift.”) 
+			fmt.Println(bufs.String())
+
+			var delim byte = 'L'
+			line, _ := bufs.ReadBytes(delim)
+			fmt.Println(bufs.String())
+			fmt.Println(string(line))
+		} 
+	打印：
+
+		=======ReadBytes== 
+		现在开始 Learning swift. 
+		earning swift. 
+		现在开始 L 
+        
+#### ReadString 
+		
+        ReadString需要一个byte作为分隔符，读的时候从缓冲器里找第一个出现的分隔符（delim），找到后，把从缓冲器头部开始到分隔符之间的所有byte进行返回，作为字符串，返回后，缓冲器也会空掉一部分 
+		和ReadBytes类似：
+
+		// ReadString reads until the first occurrence of delim in the input, 
+		// returning a string containing the data up to and including the delimiter. 
+		// If ReadString encounters an error before finding a delimiter, 
+		// it returns the data read before the error and the error itself (often io.EOF). 
+		// ReadString returns err != nil if and only if the returned data does not end 
+		// in delim. 
+		func (b *Buffer) ReadString(delim byte) (line string, err error) {} 
+        
+#### ReadFrom 
+		
+    从一个实现io.Reader接口的r，把r里的内容读到缓冲器里，n返回读的数量
+
+		// ReadFrom reads data from r until EOF and appends it to the buffer, growing 
+		// the buffer as needed. The return value n is the number of bytes read. Any 
+		// error except io.EOF encountered during the read is also returned. If the 
+		// buffer becomes too large, ReadFrom will panic with ErrTooLarge. 
+		func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error) {} 
+		func ReadFrom(){ 
+			//test.txt 内容是 “未来” 
+			file, _ := os.Open(“learngo/bytes/text.txt”) 
+			buf := bytes.NewBufferString(“Learning swift.”) 
+			buf.ReadFrom(file) //将text.txt内容追加到缓冲器的尾部 
+		fmt.Println(buf.String()) 
+		} 
+	打印：
+
+		=======ReadFrom=== 
+		Learning swift.未来 
+        
+#### Reset 
+	将数据清空，没有数据可读
+
+		// Reset resets the buffer so it has no content. 
+		// b.Reset() is the same as b.Truncate(0). 
+		func (b *Buffer) Reset() { b.Truncate(0) } 
+		func Reset(){ 
+			bufs := bytes.NewBufferString(“现在开始 Learning swift.”) 
+			fmt.Println(bufs.String())
+
+			bufs.Reset()
+			fmt.Println("::已经清空了bufs的缓冲内容::")
+			fmt.Println(bufs.String())
+		} 
+	打印：
+
+		=======Reset====== 
+		现在开始 Learning swift. 
+		::已经清空了bufs的缓冲内容:: 
+        
+#### string 
+	
+    将未读取的数据返回成 string
+
+		// String returns the contents of the unread portion of the buffer 
+		// as a string. If the Buffer is a nil pointer, it returns “”. 
+		func (b *Buffer) String() string {}
