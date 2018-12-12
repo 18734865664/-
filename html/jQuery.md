@@ -1,4 +1,4 @@
-{}### jquery
+### jquery
 
 #### 概述
 1. window.onload 和 $(document).ready()
@@ -9,9 +9,10 @@
 2. jQuery是为事件处理特别设计的
 3. this关键字，jQuery中使用$(this)调用对象本身
 4. jQuery是js的封装，所以js和jQuery和js是可以混用的
-	1. <pre>
-		
-    </pre>
+  1. <pre>
+  	
+
+   </pre>
 
 #### 语法格式
 
@@ -34,19 +35,19 @@
 2. 所有的选择器都以$作为标识： $(selector)
 3. 表格：
 	|语法 | 描述|
-    |--|--|
-    |$("*")| 选取所有元素|
-    |$(this)| 选取当前HTML元素|
-    |$("p.intro")|选取class 为intro 的&lt;p>元素|
-    |$("p:first")|选取第一个&lt;p>标签|
-    |$("ul li:first")|选取第一个&lt;ul> 元素的第一个&lt;li>元素|
-    |$("ul li:first-child")|选择每个&lt;ul>元素的第一个&lt;li>元素|
-    |$("[href]")|选取带有href属性的元素|
-    |$("a[taget='_blank']")|选取所有target属性值等于"_blank"的&lt;a>元素|
-    |$("a[taget!='_blank']")|选取所有target属性值不等于"_blank"的&lt;a>元素|
-    |$(":button")|选择所有type="button" 的&lt;input>元素和&lt;button>元素|
-    |$("tr:even")| 选取偶数位置的&lt;tr>元素|
-    |$("tr:odd")| 选取奇数位置的&lt;tr>元素|
+   |--|--|
+   |$("*")| 选取所有元素|
+   |$(this)| 选取当前HTML元素|
+   |$("p.intro")|选取class 为intro 的&lt;p>元素|
+   |$("p:first")|选取第一个&lt;p>标签|
+   |$("ul li:first")|选取第一个&lt;ul> 元素的第一个&lt;li>元素|
+   |$("ul li:first-child")|选择每个&lt;ul>元素的第一个&lt;li>元素|
+   |$("[href]")|选取带有href属性的元素|
+   |$("a[taget='_blank']")|选取所有target属性值等于"_blank"的&lt;a>元素|
+   |$("a[taget!='_blank']")|选取所有target属性值不等于"_blank"的&lt;a>元素|
+   |$(":button")|选择所有type="button" 的&lt;input>元素和&lt;button>元素|
+   |$("tr:even")| 选取偶数位置的&lt;tr>元素|
+   |$("tr:odd")| 选取奇数位置的&lt;tr>元素|
 
 4. 选择器过滤
     1. $(selector).has("element")
@@ -123,9 +124,9 @@
 |mouseleave||blur(失去焦点)|unload|
 	1. submit事件阻止表单提交
 		1. $(form).submit(function(){
-        	return false;
-        })
-        
+	    	return false;
+	    })
+
 2. jquery响应事件设置
 	1. <pre>
 		$(selector).click(
@@ -182,8 +183,8 @@
 		3. callback是执行完隐藏操作后，执行的函数名称；
 		4. <pre>
 		$("#demo2").hide(1000, function(){
-        	console.log("hiding...")
-        });
+          	console.log("hiding...")
+          });
 		 </pre>
 	2. show(speed, callback)
 	3. toggle(speed, callback)
@@ -193,7 +194,7 @@
 	4. 例子：
 		<pre>
 $(this).removeClass("now other").addClass("now").siblings().addClass("other");
-        
+      
         $(".info").eq($(this).index()).removeClass("Show Hid").addClass("Show").siblings().addClass("Hid");
         </pre>
 
@@ -248,10 +249,10 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 	1. jQuery中不同元素对象事件执行可以看作是异步操作，造成前面的特效还没结束，后面的效果开始执行
 		1. <pre>
 		$("button").click(function(){
-  			$("p").hide(1000);
-  			alert("The paragraph is now hidden");    // alert会在卷起之前弹出。这不合理
+        			$("p").hide(1000);
+        			alert("The paragraph is now hidden");    // alert会在卷起之前弹出。这不合理
 		});
-        </pre>
+          </pre>
 	2. 遇到有执行顺序要求的时候，添加到callback中，可以解决这种问题
 
 #### jQuery HTML
@@ -274,7 +275,7 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 		5. 回调函数作用是加工数据后，返回一个新的文本内容，用新文本内容赋值元素
 		6. 例子
 		$(".box1").html(function(index, older){
-                return "hello" + older + index；});
+         ​       return "hello" + older + index；});
         7. 类似python中的装饰器
 2. 获取属性
 	1. attr("paramter")
@@ -283,14 +284,14 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 		2. 设置多个属性
 		<pre>
 		$("#w3s").attr({
-    		"href" : "//www.w3cschool.cn/jquery",
-    		"title" : "jQuery 教程"
-  		});
+   	 		"href" : "//www.w3cschool.cn/jquery",
+   	 		"title" : "jQuery 教程"
+      		});
         </pre>
 
  		3. 设置多个属性，以键值对的形式传入
-		4. 使用回调函数
-			1. $(selector).attr(attribute,function(index,oldvalue))
+	​	4. 使用回调函数
+	​		1. $(selector).attr(attribute,function(index,oldvalue))
 	2. prop()
 		1. 用法与attr相同
 	3. prop()/ attr() 之间的区别
@@ -313,7 +314,7 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 	5. eg:
 		$("#box").append("world").prepend("说在前面\n").after($("&lt;div style='color: red;'>插入div&lt;/div>")).before($("&lt;div style='color:blue'>插在前面div&lt//div>"));
     6. $("&lt;div>"),尖括号括起来，标识创建了一个空的div标签
-       
+   
 4. 删除元素
 	1. remove()
 		1. 将选定的元素及其子元素删除
@@ -334,19 +335,20 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 	2. 设置属性
 		1. $("p").css("background-color","yellow");
 
-6. 尺寸
-	1.  | jQuery尺寸 | css尺寸 |
-		|--|--|
-		|width()|width|
-        |innerWidth()|width + padding * 2|
-        |outerWidth()|width + padding * 2 + border * 2|
-        |outerWidth(true)|width + padding * 2 + border * 2 + margin * 2|
-        |height()|height|
-        |innerHeight()|height + padding * 2|
-        |outerHeight()|height + padding * 2 + border * 2|
-        |outerHeight(true)|height + padding * 2 + border * 2 + margin * 2|
-	2. 使用方式
-		1. $(selector).width()
+8. 尺寸
+  1.  | jQuery尺寸 | css尺寸 |
+  	|--|--|
+  	|width()|width|
+      |innerWidth()|width + padding * 2|
+      |outerWidth()|width + padding * 2 + border * 2|
+      |outerWidth(true)|width + padding * 2 + border * 2 + margin * 2|
+      |height()|height|
+      |innerHeight()|height + padding * 2|
+      |outerHeight()|height + padding * 2 + border * 2|
+      |outerHeight(true)|height + padding * 2 + border * 2 + margin * 2|
+  2. 使用方式
+
+    1. $(selector).width()
 
 #### ajax
 1. load()
@@ -356,34 +358,37 @@ $(this).removeClass("now other").addClass("now").siblings().addClass("other");
 		$("button").click(() => {
                 $("#box").load("http://127.0.0.1:8080/data", (data) => console.log(data));
             })
-    
+   
     </pre>
 2. get()
 	1. get方法可能返回缓存数据
 	2. $.get(url, data, function, dataType)
 3. post()
-	1. post方法不会缓存数据
+
+  1. post方法不会缓存数据
 4. $.ajax()
-	1. 常用参数：
-		1. url
-		2. type: 'get'/'post'
-		3. dataType: 数据返回的格式 'json'/'text'
-		4. data： 发送给服务器的数据
-		5. success：设置请求成功后的回调函数
-		6. error：设置请求失败后的回调函数
-		7. async：设置是否异步，默认“true",表示异步
-		
-    2. $.ajax({
-    	url: "http://...",
-        type: "get",
-        dataType: "json",
-    	...
-    })
-    3. 回调函数可以简写
-    	<pre>
-    	$.ajax({
-            ....
-        }).done(function(data){...}).fail(function(data))
-        //done 表示成功响应
-        //fail 表示失败响应
-        </pre>
+  1. 常用参数：
+  	1. url
+  	2. type: 'get'/'post'
+  	3. dataType: 数据返回的格式 'json'/'text'
+  	4. data： 发送给服务器的数据
+  	5. success：设置请求成功后的回调函数
+  	6. error：设置请求失败后的回调函数
+  	7. async：设置是否异步，默认“true",表示异步
+  	
+   2. $.ajax({
+  	 	url: "http://...",
+
+       type: "get",
+       dataType: "json",
+   	...
+   })
+
+   3. 回调函数可以简写
+   	<pre>
+   	$.ajax({
+           ....
+       }).done(function(data){...}).fail(function(data))
+       //done 表示成功响应
+       //fail 表示失败响应
+       </pre>

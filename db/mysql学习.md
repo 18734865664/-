@@ -19,7 +19,7 @@
 	3. 隔离性（Isolation）
 	4. 可靠性（Durability）
 		1. innodb_flush_log_at_trx_commit 决定什么时候把事务保存到日志中。
-		
+	
 3. 事务用来管理insert, delete, update 语句。
 4. 隔离性
 	1. 风险：
@@ -40,7 +40,7 @@
 			4. READ UNCOMMIT不会采用任何锁。
 		2. read commited   //读已提交
 			1. 考虑其他事务的commit操作
-			2. 同意事务中select操作可能有不同结果
+			2. 同一事务中select操作可能有不同结果
 			3. 数据的读是不加锁的，但是数据的写入、修改、删除加锁，避免了脏读
 		3. repeatable read（默认）   // 可重复读
 			1. 不考虑其他事务的commit
@@ -87,21 +87,21 @@
 	<pre>
     	CREATE
     		[DEFINER = { user | CURRENT_USER }]
-　			PROCEDURE sp_name 		([proc_parameter[,...]])
+	　			PROCEDURE sp_name 		([proc_parameter[,...]])
     		[characteristic ...] routine_body
 
 		proc_parameter:
    			[ IN | OUT | INOUT ] param_name type
-
+	
 			characteristic:
     		COMMENT 'string'| LANGUAGE SQL| [NOT] DETERMINISTIC | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA } | SQL SECURITY { DEFINER | INVOKER }
 
 		routine_body:
 			Valid SQL routine statement
-
+	
 		[begin_label:] BEGIN
-　　			[statement_list]
-　　　			……
-		END [end_label]
-        </pre>
+	　　			[statement_list]
+	　　　			……
+	​	END [end_label]
+   ​     </pre>
 4. [参考文档](https://www.cnblogs.com/aspwebchh/p/6652855.html)

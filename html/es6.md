@@ -7,86 +7,94 @@
 ##### 声明变量
 1. let/const
 2. 使用let/const声明变量，未声明则无法使用，没有默认值（var 变量有预解析，有默认值undefined）
-		<pre>
-        	alert(nNum1);   // 不报错，值未undefied
+    <pre>
+        	alert(nNum1);   // 不报错，值为undefied
             var nNum1 = 11;
-            
-            alert(nNum2);   //报错
-            let nNum2 = 22;
-        	nNum2 = 44;     // 不报错
-        
-        	alert(nNum3);   // 报错
-            const nNum3 = 33;
-            nNum3 = 66;    //报错
-        
-        </pre>
+
+
+    ```html
+        alert(nNum2);   //报错
+        let nNum2 = 22;
+    	nNum2 = 44;     // 不报错
+    
+    	alert(nNum3);   // 报错
+        const nNum3 = 33;
+        nNum3 = 66;    //报错
+    
+    </pre>
+    ```
 3. let --> 变量， const --> 常量
 4. 在新标准中，尽量使用const声明常量，避免因赋值改变引发错误，其次推荐使用let
 5. 作用域不同
-	1. var 是函数作用域
-	2. let/const是块作用域（就是一对大括号）
-	3. eg:
-		<pre>
-        function test(){
-        	{
-            	var n1 = 10;
-                let n2 = 20;
-                const n3 = 30;
-            }
-            console.log(n1);     //正常执行
-            console.log(n2);   // 报错
-            console.log(n3);    // 报错
-        }
-        
-        </pre>
+  1. var 是函数作用域
+  2. let/const是块作用域（就是一对大括号）
+  3. eg:
+  	<pre>
+       function test(){
+       	{
+           	var n1 = 10;
+               let n2 = 20;
+               const n3 = 30;
+           }
+           console.log(n1);     //正常执行
+           console.log(n2);   // 报错
+           console.log(n3);    // 报错
+       }
+
+       </pre>
 
 ##### 数据类型
 1. 分类
-	1. 基本数据类型
-		1. 字符串
-		2. 数值
-		3. 布尔型
-		4. null
-		5. undefined
-	2. 复制类型
-		1. 对象
-		2. 数组
-		3. 函数
-1. 数组
-	1. 数组是引用类型
-		<pre>
-        	let arr = [1,2,3]
-            let arr2 = arr   // 此时两个变量指向了同一个底层数组，修改arr， 影响arr2
-            
-            // 创建新数组
-            let arr3 = []
-            for (i=0;i&lt;arr.length;i++){
-            	arr3.push(arr[i]);
-            };   // 这样获得一个独立的数组
-            也可以：
-            let arr4 = [...arr]
-        </pre>
-    2. 数组新增方法
-    	1. map()
-    		1. 遍历数组
-    		2. <pre>
-    			let arr = [1,2,3];
-                arr.map(n => {
-                	alert(n)
-                })
-            </pre>
-    	2. concat()
-    		1. 返回一个拼接后的数组，新数组与原数组无关。
-    		2. <pre>
-    			let arr = [1,2,3]
-                let arr2 = [4,5]
-                let arr3 = arr.concat(7,8)  // arr4 [1,2,3,7,8]
-                let arr4 = arr.concat(arr2) // arr4 [1,2,3,4,5]
-            </pre>
-2. 字符串
-	1. 格式化字符串
-	2. 使用反斜线包裹字符串
-	3. 变量用${}包裹
+  1. 基本数据类型
+  	1. 字符串
+  	2. 数值
+  	3. 布尔型
+  	4. null
+  	5. undefined
+  2. 复制类型
+  	1. 对象
+  	2. 数组
+  	3. 函数
+2. 数组
+  1. 数组是引用类型
+
+    <pre>
+      	let arr = [1,2,3]
+          let arr2 = arr   // 此时两个变量指向了同一个底层数组，修改arr， 影响arr2
+    
+          // 创建新数组
+          let arr3 = []
+          for (i=0;i&lt;arr.length;i++){
+          	arr3.push(arr[i]);
+          };   // 这样获得一个独立的数组
+          也可以：
+          let arr4 = [...arr]
+      </pre>
+   2. 数组新增方法：
+        1. map()
+              1. 遍历数组
+              2. 
+
+      <pre>
+      	let arr = [1,2,3];
+      	arr.map(n => {
+      		alert(n)
+      	})
+       </pre>
+        1. concat()
+              1. 返回一个拼接后的数组，新数组与原数组无关。
+              2. 
+    
+      <pre>
+      	let arr = [1,2,3]
+      	let arr2 = [4,5]
+      	let arr3 = arr.concat(7,8)  // arr4 [1,2,3,7,8]
+      	let arr4 = arr.concat(arr2) // arr4 [1,2,3,4,5]
+       </pre>
+3. 字符串
+  1. 格式化字符串
+     2. 使用反引号包裹字符串
+     2. 变量用${}包裹
 
 
 ##### 解构赋值
@@ -114,36 +122,38 @@
         console.log(`${a}`)   // 这里
     </pre>
 3. 扩展运算符（...）
-	1. 用来作为数组的标识
-	2. 赋值数组
-		1. let arr3 = [...arr, newvalue1, newvalue2...]
-	2. 用于向函数传递参数
-		<pre>
-        	function add(a,b,c){
-            	return a + b + c
-            };
-            
-            let arr = [1,2,3,4,5];
-            add(...arr)  // 会将1，2，3依次传入函数
-        </pre>
-        
-    3. 用于函数形参
-    	<pre>
-        	function add(...arr){
-            	return arr
-            }
-            add(1,2,3,4,5)
-            // 接受到的参数转变成了一个数组
-        </pre>
-        
+  1. 用来作为数组的标识
+  2. 赋值数组
+
+        1. let arr3 = [...arr, newvalue1, newvalue2...]
+  2. 用于向函数传递参数
+  	<pre>
+       	function add(a,b,c){
+           	return a + b + c
+           };
+
+           let arr = [1,2,3,4,5];
+           add(...arr)  // 会将1，2，3依次传入函数
+       </pre>
+
+   3. 用于函数形参
+   	<pre>
+       	function add(...arr){
+           	return arr
+           }
+           add(1,2,3,4,5)
+           // 接受到的参数转变成了一个数组
+       </pre>
+  ​     
 ##### 箭头函数
 1. 箭头函数可以理解成匿名函数的第二种写法，箭头函数最主要的作用是可以在对象中绑定this关键字
-	1. 匿名函数中的this指向window()对象，没绑定到匿名函数本身，使用箭头函数，可以将this绑定为箭头函数的父函数。
+
+  1. 匿名函数中的this指向window()对象，没绑定到匿名函数本身，使用箭头函数，可以将this绑定为箭头函数的父函数。
 2. 匿名函数调用，需要将匿名函数包裹在小括号中，js特色
 3. 不要再if/while代码块中定义函数，因为不同浏览器的解析结果不一致
 2. 箭头函数普通写法
 	1. <pre>
-    	var Add = (a, b) => {
+   	 	var Add = (a, b) => {
         	alert(a+b)
         }
         等价于
@@ -165,7 +175,7 @@
         	alert("hello")
         }
     </pre>    
-    
+   
 4. 函数体中只有一个return语句,返回的是基本数据类型，可以省略大括号和return关键字
 	<pre>
     	var Add = (a, b) => a+b
@@ -174,7 +184,7 @@
         	return a+b
         }
     </pre>
-    
+   
 5. 函数体中返回的是一个对象，且只有一个return语句，对象要使用小括号括起来，大括号和return关键字可以省略
     <pre>
     	var Person = (name, age) => ({name:name, age: age})
@@ -213,19 +223,19 @@
         	alert(this.age);
         },
     }
-    
-    
-    简写方法：// 跟上面一一对应，简写方式
-    var Person = {
-    	name,    // 意思是作用域中如果存在与对象属性同名的变量，可以简写。
-        age,
-        showName(){
-        	alert(this.name)
-        },
-        showAge(){
-        	alert(this.age)
-        },
-    }
+
+​    
+​    简写方法：// 跟上面一一对应，简写方式
+​    var Person = {
+​    	name,    // 意思是作用域中如果存在与对象属性同名的变量，可以简写。
+​        age,
+​        showName(){
+​        	alert(this.name)
+​        },
+​        showAge(){
+​        	alert(this.age)
+​        },
+​    }
 </pre>
 
 ##### 创建类和类的继承
@@ -271,7 +281,7 @@
             }
         }
     </pre>
-    
+   
 5. 对象实例化
 	<pre>
     	// 需要new关键字
@@ -279,42 +289,65 @@
     </pre>
     
 ##### 异步请求数据
-1. 使用promise对象封装ajax请求，封装后可以单独调用，也可以将多个promise对象合并调用（原子调用）；
-2. promise封装后，promise.then(func)传入处理success状态的处理函数，catch(func)传入处理error状态的处理函数。
-2. eg:
-	<pre>
-    	let prom1 = new Promise(function(resolve, reject){
-        	$.ajax({
-            	url: "xxxxx";
-                type: "get";
-                dataType: "json";
-                success: function(data){
-                	resolve(data);
-                },
-                error: function(data){
-                	reject(data);
-                }
-            })
-        })
-        let prom2 = new Promise((resolve, reject) => {
-        	$.ajax({
-        		url: "xxxxx",
-                type: "get",
-                dataType: "json",
-                success: data => resolve(data),
-                error: data => reject(data)
-        	})
-        })
-        // 单个Promise对象执行
-        prom1.then(data => console.log(data)).catch(data => console.log(data));
-        
-        // 多个Promise对象原子执行
-        Promise.all([prom1, prom2]).then(data => console.log(data)).catch(data => console.log(data));
-    </pre>
-    
-    
-    
-    
+
+> 服务端重定向对客户端异步请求无效，因为这里的跳转会变为异步跳转（或者请求方法可能不对），前端看不到。需要将状态返回值，前端判断状态后，执行跳转
+>
+> promise 可以解决回调地狱问题
+
+1. promise对象封装后，内部函数执行完，才会触发then/catch函数。
+
+   1. resolve/reject是系统函数，不需要自定义，执行成功使用resolve, 将promise状态由pending 转为 fulfilled。
+   2. 执行失败，调用reject，将promise对象状态由pending 转为rejected。
+
+2. 使用promise对象封装ajax请求，封装后可以单独调用，也可以将多个promise对象合并调用（原子调用）；
+
+3. promise封装后，
+
+   1. promise.then(func)传入处理success状态的处理函数，
+   2. catch(func)传入处理error状态的处理函数，
+   3. finally(func)不管结果如何，都会执行
+   4. all([a1, a2, a3])  将多个promise对象合并为一个
+   5. race([a1, a2, a3])，多个promise竞争，只执行第一个
+
+4. eg:
+  <pre>
+   	let prom1 = new Promise(function(resolve, reject){
+       	$.ajax({
+           	url: "xxxxx";
+               type: "get";
+               dataType: "json";
+               success: function(data){
+               	resolve(data);
+               },
+               error: function(data){
+               	reject(data);
+               }
+           })
+       })
+       let prom2 = new Promise((resolve, reject) => {
+       	$.ajax({
+       		url: "xxxxx",
+               type: "get",
+               dataType: "json",
+               success: data => resolve(data),
+               error: data => reject(data)
+       	})
+       })
+       // 单个Promise对象执行
+       prom1.then(data => console.log(data)).catch(data => console.log(data));
+
+       // 多个Promise对象原子执行
+       Promise.all([prom1, prom2]).then(data => console.log(data)).catch(data => console.log(data));
+   </pre>
+
+  5. 链式调用
+     1. p1.then(callback1(data)).then(callback2(data)).then(callback3(data))
+     2. 后一个then中回调函数参数是前一个then中回调函数的返回值（return）
+     3. then中return普通值没卵用，返回一个promise对象，就可以解决异步调用的顺序问题
+
+  6. 小技巧：
+     1. 按理说，promise中调用resolve/reject后，过程应该结束，实际上并不是这样，因为状态变更函数resolve/reject应该是在本轮执行的最后才执行的，所以，调用resolve后如果还有代码，仍然会执行。所以推荐在reject/resolve函数前增加return关键字
+  7. 
 ##### 模块的导入导出
 1. es6加入了模块的概念，一个js文件就是一个模块，js文件中需要先导出（export）后，才能被其他js文件导入（import）
 2. 导入的变量名必须和导出的变量名一致
@@ -322,7 +355,7 @@
 2. 名字导出
 	1. export let iNum01 = 12;
 	2. export let fnMyfunc = data => {alert(data)}     // 创建同时声明导出
-	3. export {iNum02, iNum2}  // 独立声明，集中导出
+	3. export {iNum02, iNum2}  // 独立声明，集中导出，集中导出时必须放在{}中，export iNum02 这种形式，实际导出的是变量中的值，而不是一组映射关系，导致外部不能访问其内部变量
 4. 名字导入
 	1. import {iNum01, iNum02} from "./js/mode01.js";
 	2. 需要指明script type

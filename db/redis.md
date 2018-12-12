@@ -12,7 +12,7 @@
 
 2. set
 	1. set key value  // 设置字符串
-3. mse
+3. mset
 	2. mset key1 value1 key2 value2  //都是以字符串形式保存
 3. get
 	1. get key

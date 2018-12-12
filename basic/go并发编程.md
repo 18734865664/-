@@ -1,52 +1,57 @@
 Go 并发
 
 	go在语言级别支持协程，叫goroutine。go语言标准库提供的所有系统调用操作（包括所有同步io操作），都会出让给CPU给其他goroutine。这让轻量级线程的切换管理不依赖于系统的线程和进程，也不需要依赖于CPU的核心数量
-    
-    
+
+
+​    
 goroutine
 
 		goroutine是Go并行设计的核心。goroutine说到底其实就是协程，它比线程更小，十几个goroutine可能体现在底层就是五六个线程，Go语言内部帮你实现了这些goroutine之间的内存共享。执行goroutine只需极少的栈内存(大概是4~5KB)，当然会根据相应的数据伸缩。也正因为如此，可同时运行成千上万个并发任务。goroutine比thread更易用、更高效、更轻便。
-    
+
 goroutine特性
 1. main  goroutine结束，子goroutine随之结束
 2. 注意这里：当main函数内部没有派生出子goroutine之前，只有进程的概念，
 3. 当main函数派生出子goroutine之后，main降级为主goroutine，使用Goexit退出主goroutine，并不会将子goroutine杀死，
-	1. 这种情况下，由于子goroutine调用后返回值的接收对象已经释放，会抛出runtime异常
-	2. 
+  1. 这种情况下，由于子goroutine调用后返回值的接收对象已经释放，会抛出runtime异常
+4. 内部维护了两个列表（使用双向队列实现）
+   1. 发送队列   --> 还有一个发送idx索引
+   2. 接受队列   --> 有一个接收idx索引
+5. 内部还保存有元素类型/元素个数/容量/关闭位等
 
 runtime.Gosched(): 
-	出让当前goroutine所占用的cpu时间片
-    调度器会安排其他等待的任务运行，并在下次再获得cpu时间轮片的时候，从该出让cpu的位置恢复执行
-    
+​	出让当前goroutine所占用的cpu时间片
+​    调度器会安排其他等待的任务运行，并在下次再获得cpu时间轮片的时候，从该出让cpu的位置恢复执行
+​    
 runtime.Goexit():
-	退出当前goroutine
-    Goexit之前定义的defer语句仍然生效
-    
+​	退出当前goroutine
+​    Goexit之前定义的defer语句仍然生效
+​    
 runtime.GOMAXPROCS():
-	参数：要设置的使用核数
-    返回值：设置使用的核数
-    用途：设置当前进程使用的最大CPU核数
-    
-    
+​	参数：要设置的使用核数
+​    返回值：设置使用的核数
+​    用途：设置当前进程使用的最大CPU核数
+​    
+​    
 标准文件：
-	当一个进程启动时，系统自动启动三个文件：
-    	1. 标准输入 ----> stdin
-    	2. 标准输出 ----> stdout
-    	3. 标准错误 ----> stderr
-    当程序结束时，系统自动回收
-    
-    
+​	当一个进程启动时，系统自动启动三个文件：
+​    	1. 标准输入 ----> stdin
+​    	2. 标准输出 ----> stdout
+​    	3. 标准错误 ----> stderr
+​    当程序结束时，系统自动回收
+​    
+​    
 ###channel:
 channel是goroutine之间的通信机制，可以让一个goroutine发送值信息给另一个goroutine。
 
 创建方式：
 
 	var cha1 = make(chan type, n)
-    cha1 := make(chan type, n)
-    type 是channel传输的数据的类型
-    n表示缓存区容量，缺省将初始化一个无缓冲区额channel
-    
-    
+	cha1 := make(chan type, n)
+	type 是channel传输的数据的类型
+	n表示缓存区容量，缺省将初始化一个无缓冲区额channel
+
+
+​    
 
 #### 特点：
 1. channel跟map/slice类似，也是一个对应make创建的底层数据结构的引用，作为函数参数时，是引用传递
@@ -74,7 +79,7 @@ channel是goroutine之间的通信机制，可以让一个goroutine发送值信�
 
 #### channel 分类
 	无缓存channel拥有实现同步操作的能力
-    有缓存channel拥有实现异步操作的能力
+	有缓存channel拥有实现异步操作的能力
 
 ##### 不带缓存的channel
 
@@ -86,13 +91,14 @@ channel是goroutine之间的通信机制，可以让一个goroutine发送值信�
 happens before：
 
 	通过一个无缓存channel发送数据时，接收者收到数据发生在唤醒发送者goroutine之前
-    happens before是go语言并发内存模型的一个关键术语
-    
-    
+	happens before是go语言并发内存模型的一个关键术语
+
+
+​    
 ##### 带缓存的channel
     带缓存的channel内部持有一个元素队列（使用双向循环队列创建）
     队列的最大容量在调用make函数创造时通过第二个参数指定
-    
+
 读取数据：
 1. 向缓存channel的发送操作就是向内部缓存队列的尾部插入元素
 2. 接收操作则是从队列的头部删除元素
@@ -103,24 +109,24 @@ happens before：
 
 尽量避免使用channel作为goroutine中的队列使用，很容易发生阻塞，引起程序崩溃
 
-    
-    
+
+​    
 #### 管道 --> 串联的channels
 
 	一个channel的输出作为另一个channel的输入
-    
+
 #### 单方向channel
 	当一个channel作为一个函数参数时，它一般总是被专门用于只发送或者只接收
-    所谓的单项channel，其实只是对channel的一种使用限制
-    channel本身必然是同时支持读写的
-    
+	所谓的单项channel，其实只是对channel的一种使用限制
+	channel本身必然是同时支持读写的
+
 1. 只接收： chan <- int
 2. 只发送： <- chan int
 3. 这种限制在编译期进行检测
 4. 任何双向channel向单向channel变量的赋值操作都将导致该隐式转换，但是没有反向转换的语法
 	1. ch1 := make(chan int)
 	2. ch2 := <- chan int(ch1)
-    
+   
 #### channel的关闭/迭代
 1. 没有办法直接测试一个channel是否被关闭
 2. 类似map取值，可以返回两个值
@@ -145,10 +151,10 @@ happens before：
 	2. 
 
 ![select语法.png](.\image\select语法.png)
-	
-    如果没有default语句，select代码块将阻塞至有一个case可以执行的时候。但可能出现出现忙轮询死循环
-    所以一般不写default语句，阻塞后会挂起，释放cpu
-    
+​	
+​    如果没有default语句，select代码块将阻塞至有一个case可以执行的时候。但可能出现出现忙轮询死循环
+​    所以一般不写default语句，阻塞后会挂起，释放cpu
+
 select在go语言中经典用法:
 可以实现超时机制，防止阻塞造成的程序终止运行：
 
@@ -159,10 +165,10 @@ select在go语言中经典用法:
 
 	生产者：生产数据
 	缓存区：
-    	1. 解耦（降低生产者和消费者之间耦合度）
+		1. 解耦（降低生产者和消费者之间耦合度）
 			低耦合高内聚
-        2. 并发（生产能力和消费能力不对等时，保持正常运转）
-        3. 缓存（生产者和消费者处理速度不一致时，暂存数据）
+	    2. 并发（生产能力和消费能力不对等时，保持正常运转）
+	    3. 缓存（生产者和消费者处理速度不一致时，暂存数据）
 	消费者：消费数据
 #### 同步
 ##### 同步锁（两种锁）
@@ -202,7 +208,7 @@ select在go语言中经典用法:
 
 #### 死锁
 单goroutine死锁
-	1. channel起码在两个以上的goroutine间通信
+​	1. channel起码在两个以上的goroutine间通信
 goroutine访问顺序导致死锁
 多channel，多goroutine交叉死锁
 
@@ -223,20 +229,58 @@ cond.Signal()
 
 cond.Broadcast()
 广播通知，给所有正在等待（阻塞）的goroutine发送通知，唤醒程序
-	1. 会产生惊群效应
-    2. 使用signal有可能在整体判断结束时，由于新唤醒程序再次进入休眠，形成死锁
-    
+​	1. 会产生惊群效应
+​    2. 使用signal有可能在整体判断结束时，由于新唤醒程序再次进入休眠，形成死锁
+​    
 ![条件变量.png](.\image\条件变量.png)
 
 ######使用
+
 1. 创建条件变量： var cond sync.Cond
 2. 指定条件变量用的锁： cond.L = new(sync.Mutex)
 3. cond.L.Lock() 给资源加锁
 4. 判断是否达到阻断条件，达到使用cond.wait()
 
+### sync.Pool
+
+> go提供的原生变量池，可以用来存放可能会用到的变量
+>
+> 不能用来做socket的连接池，因为这个Pool的生命周期只是两次GC之间的间隔，GC的时候会清空这个Poll
+>
+> sync.Pool底层
+>
+> ```go
+> type Pool struct {
+> 	noCopy noCopy      //空结构体，有锁定/解锁两个方法
+> 	local     unsafe.Pointer // local fixed-size per-P pool, actual type is [P]poolLocal
+> localSize uintptr        // size of the local array
+> 
+> 	// New optionally specifies a function to generate
+> 	// a value when Get would otherwise return nil.
+> 	// It may not be changed concurrently with calls to Get.
+> 	New func() interface{}   //  创建对象的方法
+> }
+> ```
+
+> sync.Pool为每个tread维护一个私有共享池，而每个goroutine有一个私有变量用于保存对象
+>
+> 获取过程：
+>
+> 1. 判断goroutine本身私有变量是否有值，有就返回，并将私有变量置空
+> 2. goroutine私有变量为空，则查找tread中是否有可用的pool对象，优则返回（需要加锁）
+> 3. 去其他thread中偷取变量，有则返回，没有则new一个（需要加锁）
+> 4. 最多可能有N次加锁，N为MAXPROCS
+>
+> 归还对象：
+>
+> 1. 如果goroutine私有变量为空，则放入其中
+> 2. 否则加入goroutine所在的P的共享池（需要加锁）
+> 3. 需要加锁0次或1次
+
 
 
 ### 并发退出
+
 两个问题：
 1. 关闭的无缓存channel，可以从中读取channel传递类型的默认值，利用这个特性，定义个channel，接收输入值，关闭channel触发goroutine关闭动作
 2. 利用sync.Waitgroup保证main goroutine作为最后一个关闭

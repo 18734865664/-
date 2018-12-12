@@ -13,17 +13,17 @@ m1 := make(map[string]int)| 已初始化内存，默认长度0
 m1 := make(map[string]int, 5)|已初始化内存，定义长度为5，自动增长
 
 map 类型的键，不能使用引用类型（slice/map/func等）
-借口值是可以进行比较的，可以用来做map的键
+接口值是可以进行比较的，可以用来做map的键
 
 
 #### 初始化
 	var m map[string]int = map[string]int{"zhangsan":1, "lisi":2}
-    m := map[string]int{"zhangsan":1, "lisi":2}
+	m := map[string]int{"zhangsan":1, "lisi":2}
 
 #### 赋值
 		赋值过程中，如果新map元素的key原map元素key相同，则覆盖。
-        如不同，则添加
-        
+	    如不同，则添加
+
 #### map使用
 ##### 遍历
 
@@ -37,8 +37,7 @@ map 类型的键，不能使用引用类型（slice/map/func等）
 ##### 删除
 	内建函数delete函数
 	delete(map, key)
-    delete函数调用失败，不会报错
-    
+	delete函数调用失败，不会报错
+
 ##### 作为参数
 	map作为函数参数，传递引用
-    

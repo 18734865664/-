@@ -11,6 +11,8 @@
 > nodejs中运行的代码都是js语句
 >
 > nodejs 生而异步，所有的代码执行默认都是异步执行
+>
+> 题外话：web服务的本实就是在传输字节流，node作为后端平台，不认识什么网页图片，只识别/处理字节流
 
 ## 2. 语法
 
@@ -21,18 +23,7 @@
 > 2. nodejs中没有css样式
 > 3. 提供了一些标准包（http/fs等）
 > 4. 还提供了一些全局API（服务端能力相关）
->    1. require
->       1. 引包，类似于import
->       2. 两个作用
->          1. 会执行被引用文件中的代码
->          2. 返回一个模块对象，使用该对象操作模块中的变量/方法
->             1. 要对外开放的变量，需要使用module.exports.valName1 = valName2    //valName1和valName2可以相同，也可以不同
->             2. nodejs中每个js文件相当于在文件末尾有一句 return module.exports // 返回模板对象，module是默认的模板对象，module有一个成员对象exports(是一个引用类型)，然后每个模块都隐式的return该成员
->             3. 实际使用时，module可以省略，使用exports == module.exports
->       3. require同目录下模块“./”不可以省略
->       4. 导出单一成员时：
->          1. modole.exports = 123     // 后面接的可以是变量，也可以是方法
->          2. exports = 123    // 这种写法是错误的，因为在模块中本身隐式的有一个exports = modole.exports 所以，这种写法不可取
+>    1. 1. 1. 
 >    2. Class: Buffer
 >    3. process         --    (进程对象)
 >
@@ -43,10 +34,49 @@
 > require关键字，类似于import
 >
 > const http = require("http")
+>
+> node拥有所有技术中最多的第三方包资源（www.npmjs.com）
+
+#### 2.1.1 require
+
+> 1. 引包，类似于import
+>
+> 2. 两个作用
+>
+>    1. 会执行被引用文件中的代码
+>    2. 返回一个模块对象，使用该对象操作模块中的变量/方法
+>       1. 要对外开放的变量，需要使用module.exports.valName1 = valName2    //valName1和valName2可以相同，也可以不同
+>       2. nodejs中每个js文件相当于在文件末尾有一句 return module.exports // 返回模板对象，module是默认的模板对象，module有一个成员对象exports(是一个引用类型)，然后每个模块都隐式的return该成员
+>       3. 实际使用时，module可以省略，使用exports == module.exports
+>
+> 3. require同目录下模块“./”不可以省略，nodejs中规定，非自定义模块（标准模块 /优先级高+ 三方模块）调用直接写模块名
+>
+> 4. 导出有限个成员：
+>
+>    1. modole.exports = {
+>
+>       ​	v1 = v1,
+>
+>       ​	v2 = v2
+>
+>       }
+>
+> 5. 导出单一成员时：
+>
+>    1. modole.exports = 123     // 后面接的可以是变量，也可以是方法
+>    2. exports = 123    // 这种写法是错误的，因为在模块中本身隐式的有一个exports = modole.exports 所以，这种写法不可取
+
+#### 2.1.2 包和模块
+
+> 模块：可以是一个或多个JavaScript文件
+>
+> 包：一般是一个目录，里面组织了一个或多个模块
 
 ### 2.2 文件读写
 
 > const fs = require("fs")
+>
+> 提供的操作基本都是异步操作
 
 ### 2.2.1 读文件
 
@@ -82,15 +112,69 @@
 
 > const http = require("http")
 
-### 2.5 Sockt网络
+### 2.4.1 示例
+
+<pre>
+
+</pre>
+
+</pre>
+
+### 2.5 Socket网络
 
 ### 2.6 全局成员
 
+- Class: Buffer
+- __dirname
+- __filename
+- clearImmediate(immediateObject)
+- clearInterval(intervalObject)
+- clearTimeout(timeoutObject)
+- console
+- exports
+- global
+- module
+- process
+- require()
+- setImmediate(callback[, ...args])
+- setInterval(callback, delay[, ...args])
+- setTimeout(callback, delay[, ...args])
 
+### 2.7 其他标准库
+
+#### 2.7.1 path
+
+* path.basename(filepath)    // 获取文件部分
+
+  * path.basename("/a/b/c/index.html", ".html")  // 结果是index
+
+* path.dirname('/a/b/c/index.html')    // 结果是/a/b/c
+
+* path.extname('a/b/c/index.html')      // 结果时.html
+
+* path.parse      // 将一个路径转换成一个对象，得到组成路径的各个部分
+
+  * > path.parse('/home/user/dir/file.txt');
+    > // Returns:
+    > // { root: '/',
+    > //   dir: '/home/user/dir',
+    > //   base: 'file.txt',
+    > //   ext: '.txt',
+    > //   name: 'file' }
+
+* path.format()    //可以视为path.parse   的逆过程，传入一个对象
+
+* path.join('a', 'b', 'c', )  
+
+* path.isAbsolute(filepath)    // 判断是否绝对路径
+
+* path.resolve('a','b')                // 类似path.join(), 用来拼接路径，更智能，会自动容错
 
 ## 3. npm（Node Package Manager）
 
-> npm 用于解决Node中第三方包共享问题，
+> npm 用于解决Node中第三方包共享问题
+>
+> npm中存储的不止是nodejs中的包，也包括浏览器端js使用的包，如jQuery
 
 ### 3.1 两层含义
 
@@ -164,13 +248,38 @@
 >
 > npm  install --production  只安装dependencies依赖项中的包
 
+## 4 第三方包
 
+### 4.1 moment
 
+> 处理时间，推荐使用
+>
+> momentjs.cn     // 文档
 
+### 4.2 http-server
 
+> 全局安装包，用来快速启动一个web服务
 
+### 4.3 browser-sync
 
+> 提供一个browser-sync命令
 
+### 4.4 nodemon
 
+> 监控文件变化，自动重启web服务
 
+### 4.5  mysql
 
+> 使用的模块名就叫“mysql”, 连接mysql数据库
+
+### 4.6 handlebars
+
+> 模板引擎，用来格式化字符串
+
+### 4.7 express
+
+> nodejs   web框架
+
+### 4.8 ejs
+
+> 模板引擎

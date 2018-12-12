@@ -1,10 +1,15 @@
 ### 数据库
 #### 数据模型：
 1. 数据结构
-	1. 数据类型
-	2. 数据之间关系
+  1. 数据类型
+  2. 数据之间关系
 2. 数据操作
 3. 数据完整性约束
+   1. 非空约束
+   2. 唯一性约束
+   3. 外键
+   4. 主键
+   5. 检查性约束
 
 #### 常见数据库
 1. 关系型数据库
@@ -110,92 +115,92 @@
 
 ### 子句操作
 1. where 子句
-	1. 用于定位记录
-	2. 使用where子句，比较运算符和like语句中不区分大小写，可以使用binary关键字指定区分大小写
-		1. select * from tb1  where binary  user = "ZHANGSAN";
+  1. 用于定位记录
+  2. 使用where子句，比较运算符和like语句中不区分大小写，可以使用binary关键字指定区分大小写
+  	1. select * from tb1  where binary  user = "ZHANGSAN";
 
 2. having 子句
-	1. 类似where操作，
-	2. group by后面接条件语句，必须使用having
-1. in
-	1. select * from hero where job in ("上忍", "中忍") order by salary;
-	2. select * from hero where job not in ("上忍", "中忍") order by salary;
-		1. not in结果集中不包括NULL。
-		2. 参数列表中不能有null,如果出现null,则一条都查不到(这是因为从右往左断言，最后一条如果是null,相当于or != null，直接判断为false，不再往左走，最后结果为空)
-	3. select * from hero where heroId in (select distinct leaderId from hero);
-		1. 子查询
-2. between and
-	1. select * from hero where salary between 7000  and 10000;
-		2. 7000和10000都能取到，闭区间
-		3. 两个参数的顺序必须是从小到大
-		4. between and 数字和字母都可以
-	4. not between 表示不在区间里
-3. limit
-	1. select * from hero limit 5;
-		1. 显式前5条，相当于limit 0, 5
-	2. select * from hero limit 5,10;
-		1. 第六条开始，显式10条
-	3. 索引从零开始
-4. 通配符
-	1. %：零个或多个字符
-	2. _: 代表任意一个字符
-	5. 通配符必须与like语句同时使用
-	
-5. Null
-	1. select * from  hero where commission is null;
-	2. select * from  hero where commission is not null;
-	3. 判断一个字段是否为NULL值，不能使用普通的比较运算符，不报错，但也没有返回值
-	
-6. alias   --   as 关键字
-	1. select h.salary from hero as h where h.job in ("上忍");   -- 为表设定别名
-	2. select h.salary as sa from hero as h where h.job in ("上忍");   --- 为字段设定别名
+  1. 类似where操作，
+  2. group by后面接条件语句，必须使用having
+3. in
+  1. select * from hero where job in ("上忍", "中忍") order by salary;
+  2. select * from hero where job not in ("上忍", "中忍") order by salary;
+  	1. not in结果集中不包括NULL。
+  	2. 参数列表中不能有null,如果出现null,则一条都查不到(这是因为从右往左断言，最后一条如果是null,相当于or != null，直接判断为false，不再往左走，最后结果为空)
+  3. select * from hero where heroId in (select distinct leaderId from hero);
+  	1. 子查询
+4. between and
+  1. select * from hero where salary between 7000  and 10000;
+  	2. 7000和10000都能取到，闭区间
+  	3. 两个参数的顺序必须是从小到大
+  	4. between and 数字和字母都可以
+  4. not between 表示不在区间里
+5. limit
+  1. select * from hero limit 5;
+  	1. 显式前5条，相当于limit 0, 5
+  2. select * from hero limit 5,10;
+  	1. 第六条开始，显式10条
+  3. 索引从零开始
+6. 通配符
+  1. %：零个或多个字符
+  2. _: 代表任意一个字符
+  5. 通配符必须与like语句同时使用
 
-7. group by
-	1. select job from hero group by job;
-		1. select 后只能出现，group by 后面出现的分组关键字，和相关分组内的算术计算值（内置函数）
-		2. select deptId, avg(salary) as avg_salary from hero group by deptId;
-	2. select leaderId, job from hero group by leaderId,job;
-		1. 多元素分组，先按照后面的元素分组
-	3. select job, group_concat(heroName) from hero group by job;
-		1. 获取分组后包含的其它元素
-	4. select 后面出现的字段，如果不出现在聚合函数中，则必须出现在group by子句中，如果聚合函数/group by子句中都没有出现，则报错。
-	5. group by 后面接条件语句，必须使用having
+7. Null
+  1. select * from  hero where commission is null;
+  2. select * from  hero where commission is not null;
+  3. 判断一个字段是否为NULL值，不能使用普通的比较运算符，不报错，但也没有返回值
 
-8. isnull 函数
-	1. isnull(expr) 如果expr是null，返回1， 如果不是返回0。
-9. join 和key
-	1. inner join(只显示交集)
-		1. select h.heroName, h.job, d.deptName from hero as h, dept as d where h.deptId = d.deptId;    -- 引用多张表，
-		2. select h.heroName, h.job, d.deptName, h.salary from hero as h inner join  dept as d on h.deptId = d.deptId order by h.salary;
-![交集联表.png](H:\go\markdown\go语言并发编程\image\交集联表.png)
+8. alias   --   as 关键字
+  1. select h.salary from hero as h where h.job in ("上忍");   -- 为表设定别名
+  2. select h.salary as sa from hero as h where h.job in ("上忍");   --- 为字段设定别名
 
-	2. left join（以左表为基础，联表）
-		3. LEFT JOIN 关键字会从左表 (table_name1) 那里返回所有的行，即使在右表 (table_name2) 中没有匹配的行
-		1. select * from tb1 left join tb2 on tb1.id = tb2.id;
-		2. select * from tb1 left join tb2 on tb1.id = tb2.id where tb2 is null
-![左联表.png](H:\go\markdown\go语言并发编程\image\左联表.png)
-	3. right join（以右表为基础，联表）
-		1. select * from tb1 right join tb2 on tb1.id = tb2.id;
-		2. select * from tb1 right join tb2 on tb1.id = tb2.id where tb1 is null;
-	4. left join union right join（整表，或者空心整表）
-		1. select * from tb1 left join tb2 on tb1.id = tb2.id union select * from tb1 right join tb2 on tb1.id = tb2.id;
-![全数据联表.png](H:\go\markdown\go语言并发编程\image\全数据联表.png)
+9. group by
+  1. select job from hero group by job;
+    1. select 后只能出现，group by 后面出现的分组关键字，和相关分组内的算术计算值（内置函数）
+    2. select deptId, avg(salary) as avg_salary from hero group by deptId;
+  2. select leaderId, job from hero group by leaderId,job;
+    1. 多元素分组，先按照后面的元素分组
+  3. select job, group_concat(heroName) from hero group by job;
+    1. 获取分组后包含的其它元素
+  4. select 后面出现的字段，如果不出现在聚合函数中，则必须出现在group by子句中，如果聚合函数/group by子句中都没有出现，则报错。
+  5. group by 后面接条件语句，必须使用having
 
-		2. select * from tb1 left join tb2 on tb1.id = tb2.id where tb2 is null union select * from tb1 right join tb2 on tb1.id = tb2.id where tb1 is null;
-![交集之外元素的总合.png](H:\go\markdown\go语言并发编程\image\交集之外元素的总合.png)
+10. isnull 函数
+  1. isnull(expr) 如果expr是null，返回1， 如果不是返回0。
+11. join 和key
+   1. inner join(只显示交集)
+     1. select h.heroName, h.job, d.deptName from hero as h, dept as d where h.deptId = d.deptId;    -- 引用多张表，
+     2. select h.heroName, h.job, d.deptName, h.salary from hero as h inner join  dept as d on h.deptId = d.deptId order by h.salary;
+       ![交集联表](H:\go\markdown\db\image\交集联表.png)
 
-10. union
-	1. union 操作用于合并两个或多个select语句的结果集
-	2. union内部的select语句，必须拥有相同数量和顺序的字段，列必须有相似的数据类型
-	3. 返回结果的表头由最前面的select语句决定，后面select语句的结果，只要数据类型相似，按顺序添加到结果集中
-	4. union默认会合并书面值相同的结果
-	5. 使用union all 可以显示全部结果，不合并
-![union_sql.png](H:\go\markdown\go语言并发编程\image\union_sql.png)
- 
-11. ifnull
-	1.  select a.heroName as "英雄", ifnull(b.heroName, "boss") as "老板".from hero as a left join oin hero as b on a.leaderId = b.heroId;
-	2.  ifnull(a, b)如果a不为null，返回a,如果为null，返回b 
- 
+   2. left join（以左表为基础，联表）
+     3. LEFT JOIN 关键字会从左表 (table_name1) 那里返回所有的行，即使在右表 (table_name2) 中没有匹配的行
+     1. select * from tb1 left join tb2 on tb1.id = tb2.id;
+     2. select * from tb1 left join tb2 on tb1.id = tb2.id where tb2 is null
+     ![左联表](H:\go\markdown\db\image\左联表.png)
+   3. right join（以右表为基础，联表）
+     1. select * from tb1 right join tb2 on tb1.id = tb2.id;
+     2. select * from tb1 right join tb2 on tb1.id = tb2.id where tb1 is null;
+   4. left join union right join（整表，或者空心整表）
+     1. select * from tb1 left join tb2 on tb1.id = tb2.id union select * from tb1 right join tb2 on tb1.id = tb2.id;
+       ![全数据联表](H:\go\markdown\db\image\全数据联表.png)
+
+     2. select * from tb1 left join tb2 on tb1.id = tb2.id where tb2 is null union select * from tb1 right join tb2 on tb1.id = tb2.id where tb1 is null;
+     ![交集之外元素的总合](H:\go\markdown\db\image\交集之外元素的总合.png)
+
+12. union
+    1. union 操作用于合并两个或多个select语句的结果集
+    2. union内部的select语句，必须拥有相同数量和顺序的字段，列必须有相似的数据类型
+    3. 返回结果的表头由最前面的select语句决定，后面select语句的结果，只要数据类型相似，按顺序添加到结果集中
+    4. union默认会合并书面值相同的结果
+    5. 使用union all 可以显示全部结果，不合并
+    ![union_sql](H:\go\markdown\db\image\union_sql.png)
+
+13. ifnull
+    1.  select a.heroName as "英雄", ifnull(b.heroName, "boss") as "老板".from hero as a left join oin hero as b on a.leaderId = b.heroId;
+    2.  ifnull(a, b)如果a不为null，返回a,如果为null，返回b 
+
 ### 数据约束（通过create table）
 1. NOT NULL
 	1. 字段强制不接受NULL
@@ -223,7 +228,7 @@
 ![删除unique_key.png](.\image\删除unique_key.png)
 
 			2. drop index idx_emp2 on emp2;
-			
+	
 3. PRIMARY KEY
 	1. primary key属性
 		1. unique 属性
